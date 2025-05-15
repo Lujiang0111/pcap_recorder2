@@ -89,6 +89,8 @@ if(os_name MATCHES "windows")
         zlib 1.3.1"
     )
 else()
+    target_link_libraries(${PROJECT_NAME} PRIVATE pcap)
+    target_link_libraries(${PROJECT_NAME} PRIVATE pthread)
 endif()
 
 # 编译前操作
