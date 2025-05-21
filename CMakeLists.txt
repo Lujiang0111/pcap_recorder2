@@ -54,7 +54,7 @@ message(STATUS "os name=${os_name}, os version=${os_version}, os arch=${os_arch}
 target_include_directories(${PROJECT_NAME} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${CMAKE_CURRENT_BINARY_DIR}/dep/include/lccl
-    ${CMAKE_CURRENT_BINARY_DIR}/dep/include/libpcap_dump
+    ${CMAKE_CURRENT_BINARY_DIR}/dep/include/pcap_dump
 )
 
 # 链接库目录
@@ -62,15 +62,15 @@ target_link_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/dep/
 
 # 链接库
 target_link_libraries(${PROJECT_NAME} PRIVATE lccl)
-target_link_libraries(${PROJECT_NAME} PRIVATE libpcap_dump)
+target_link_libraries(${PROJECT_NAME} PRIVATE pcap_dump)
 
 set(prebuild_lib_base_path "${CMAKE_CURRENT_SOURCE_DIR}/../../../version/lib")
 set(prebuild_libs "lccl 1.0 \
-    libpcap_dump 1.0")
+    pcap_dump 1.0")
 
 set(postbuild_lib_base_path "${CMAKE_CURRENT_SOURCE_DIR}/../../../version/lib")
 set(postbuild_libs "lccl 1.0 \
-    libpcap_dump 1.0")
+    pcap_dump 1.0")
 
 # 系统自定义参数
 if(os_name MATCHES "windows")
