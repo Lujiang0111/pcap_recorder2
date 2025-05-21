@@ -23,7 +23,7 @@ class Rebuild:
         self.build(os.path.join(self.__env_path, "source", "program", "pcap_recorder2"))
 
     def build(self, path) -> None:
-        print(f"\033[33mmake project {os.path.basename(path)}...\033[0m")
+        print(f"\n\033[33mmake project {os.path.basename(path)}...\033[0m")
 
         os.chdir(path)
 
