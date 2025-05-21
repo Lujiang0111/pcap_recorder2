@@ -49,6 +49,17 @@ class Rebuild:
                 check=True,
                 shell=False,
             )
+        else:
+            subprocess.run(
+                ["cmake", ".."],
+                check=True,
+                shell=False,
+            )
+            subprocess.run(
+                ["make", f"-j{os.cpu_count()}"],
+                check=True,
+                shell=False,
+            )
 
 
 if __name__ == "__main__":
