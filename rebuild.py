@@ -11,10 +11,12 @@ class Rebuild:
 
     def main(self, args) -> None:
         param_cnt = len(args) - 1
+
         if param_cnt > 0:
             self.__build_type = args[1]
         else:
             self.__build_type = "Debug"
+        print(f"build type={self.__build_type}")
 
         self.__env_path = pathlib.Path(__file__).resolve().parent.parent.parent.parent
 
