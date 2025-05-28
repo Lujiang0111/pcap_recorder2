@@ -16,6 +16,10 @@ class Rebuild:
             self.__build_type = args[1]
         else:
             self.__build_type = "Debug"
+
+        if (self.__build_type != "Debug") and (self.__build_type != "Release"):
+            print(f"build type={self.__build_type} error, should be Debug or Release")
+            sys.exit(1)
         print(f"build type={self.__build_type}")
 
         self.__env_path = pathlib.Path(__file__).resolve().parent.parent.parent.parent
@@ -53,7 +57,7 @@ class Rebuild:
             )
         else:
             subprocess.run(
-                ["cmake", ".."],
+                ["cmake", "..", f"-DCMAKE_BUILD_TYPE={self.__build_type}"],
                 check=True,
                 shell=False,
             )
