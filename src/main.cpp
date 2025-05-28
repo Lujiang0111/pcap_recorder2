@@ -78,7 +78,7 @@ static std::shared_ptr<Param> ParseParam(int argc, char **argv)
     return param;
 }
 
-static void LibPcapDumpLogCallback(pcapdump::LogLevels level, const char *file_name, int file_line, const char *content, size_t len)
+static void LibPcapDumpLogCallback(void *opaque, pcapdump::LogLevels level, const char *file_name, int file_line, const char *content, size_t len)
 {
     lccl::log::Levels lccl_level = lccl::log::Levels::kDebug;
     switch (level)
@@ -106,7 +106,7 @@ int main(int argc, char **argv)
 {
     signal(SIGINT, SigIntHandler);
 
-    pcapdump::SetLogCallback(LibPcapDumpLogCallback);
+    pcapdump::SetLogCallback(LibPcapDumpLogCallback, nullptr);
 
     std::shared_ptr<Param> param = ParseParam(argc, argv);
     if (!param)
