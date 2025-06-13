@@ -19,7 +19,7 @@ for file in *.so.*; do
         fi
     fi
 done
-ldconfig -n ./
+ldconfig -n .
 
 runlog_max_size=10000000
 cd "${shell_path}" || exit
