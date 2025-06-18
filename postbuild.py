@@ -58,7 +58,7 @@ def create_so_link(dir) -> None:
             )
 
 
-class Prebuild:
+class Postbuild:
     __os_name = None
     __os_version = None
     __os_arch = None
@@ -166,5 +166,5 @@ class Prebuild:
 
 # 程序入口
 if __name__ == "__main__":
-    prebuild = Prebuild()
+    prebuild = Postbuild()
     prebuild.main(sys.argv)
