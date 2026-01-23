@@ -28,12 +28,12 @@ static void ShowUsage()
 {
     std::cerr << "\nUsage: ./pcap_recorder2 [-i input file]\n\n"
         << "-i\t\tcreate a file that contains several lines in\n"
-        << "\t\t[ip] [port] [interface name / interface ip] [file duration(in second)] [cycle amount of files]\n"
+        << "\t\t[ip] [port] [interface name / interface ip] [file duration(in second)] [cycle amount of files] [in/out/inout]\n"
         << "\t\te.g., input.txt\n"
         << "\t\t========================\n"
-        << "\t\t224.5.6.7 23456 192.168.0.100 60 10\n"
-        << "\t\t192.168.0.1 any 127.0.0.1 30 100\n"
-        << "\t\tany 12345 enp5s0 120 30\n"
+        << "\t\t224.5.6.7 23456 192.168.0.100 60 10 in\n"
+        << "\t\t192.168.0.1 any 127.0.0.1 30 100 out\n"
+        << "\t\tany 12345 enp5s0 120 30 inout\n"
         << "\t\t========================\n";
 }
 
@@ -137,7 +137,8 @@ int main(int argc, char **argv)
         std::string ip, port, interface_name;
         int64_t segment_interval = 0;
         size_t segment_size = 0;
-        if (!(ss >> ip >> port >> interface_name >> segment_interval >> segment_size))
+        std::string io_str;
+        if (!(ss >> ip >> port >> interface_name >> segment_interval >> segment_size >> io_str))
         {
             LCCL_DEFAULT_LOG_SYNC(lccl::log::Levels::kError, "Line param not enough, line={}", line);
             continue;
@@ -157,6 +158,21 @@ int main(int argc, char **argv)
         dumper->SetParam(pcapdump::IDumper::ParamNames::kSegmentInterval, &segment_interval, sizeof(segment_interval));
         dumper->SetParam(pcapdump::IDumper::ParamNames::kSegmentSize, &segment_size, sizeof(segment_size));
         dumper->SetParam(pcapdump::IDumper::ParamNames::kDumpDir, param->record_dir.c_str(), param->record_dir.length());
+       
+        int io_flag = 0;
+        if ("out" == io_str)
+        {
+            io_flag = 2;
+        }
+        else if ("inout" == io_str)
+        {
+            io_flag = 3;
+        }
+        else
+        {
+            io_flag = 1;
+        }
+        dumper->SetParam(pcapdump::IDumper::ParamNames::kIoFlag, &io_flag, sizeof(io_flag));
 
         if (!dumper->Init())
         {
