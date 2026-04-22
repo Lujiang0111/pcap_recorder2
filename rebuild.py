@@ -7,7 +7,7 @@ import pathlib
 
 class Rebuild:
     __build_type = None
-    __env_path = None
+    __env_dir = None
 
     def main(self, args) -> None:
         param_cnt = len(args) - 1
@@ -22,11 +22,11 @@ class Rebuild:
             sys.exit(1)
         print(f"build type={self.__build_type}")
 
-        self.__env_path = pathlib.Path(__file__).resolve().parent.parent.parent.parent
+        self.__env_dir = pathlib.Path(__file__).resolve().parent.parent.parent.parent
 
-        self.build(os.path.join(self.__env_path, "source", "lib", "lccl"))
-        self.build(os.path.join(self.__env_path, "source", "lib", "pcap_dump"))
-        self.build(os.path.join(self.__env_path, "source", "program", "pcap_recorder2"))
+        self.build(os.path.join(self.__env_dir, "source", "lib", "lccl"))
+        self.build(os.path.join(self.__env_dir, "source", "lib", "pcap_dump"))
+        self.build(os.path.join(self.__env_dir, "source", "program", "pcap_recorder2"))
 
     def build(self, path) -> None:
         print(f"\n\033[33mmake project {os.path.basename(path)}...\033[0m")
@@ -69,5 +69,5 @@ class Rebuild:
 
 
 if __name__ == "__main__":
-    prebuild = Rebuild()
-    prebuild.main(sys.argv)
+    rebuild = Rebuild()
+    rebuild.main(sys.argv)

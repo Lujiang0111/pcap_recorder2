@@ -63,9 +63,9 @@ class Postbuild:
     __os_version = None
     __os_arch = None
     __build_type = "Debug"
-    __trd_path = None
-    __lib_dst_path = None
-    __lib_base_path = None
+    __trd_dir = None
+    __lib_dst_dir = None
+    __lib_base_dir = None
 
     def main(self, args) -> None:
         param_cnt = len(args) - 1
@@ -77,14 +77,14 @@ class Postbuild:
         self.__os_version = args[2]
         self.__os_arch = args[3]
         self.__build_type = args[4]
-        self.__trd_path = os.path.join(args[5], "3rd")
+        self.__trd_dir = os.path.join(args[5], "3rd")
 
         if "windows" == self.__os_name:
-            self.__lib_dst_path = os.path.join(args[6], "bin")
+            self.__lib_dst_dir = os.path.join(args[6], "bin")
         else:
-            self.__lib_dst_path = os.path.join(args[6], "bin", "lib")
+            self.__lib_dst_dir = os.path.join(args[6], "bin", "lib")
 
-        self.__lib_base_path = args[7]
+        self.__lib_base_dir = args[7]
 
         # 获取库名及其版本
         if param_cnt >= 8:
@@ -97,35 +97,35 @@ class Postbuild:
 
                 if not self.__copy_lib(lib_name, lib_version):
                     print(
-                        f"{lib_name} v{lib_version} not found! put {lib_name} in {os.path.join(self.__trd_path, lib_name)} or {os.path.join(self.__lib_base_path, lib_name)}"
+                        f"{lib_name} v{lib_version} not found! put {lib_name} in {os.path.join(self.__trd_dir, lib_name)} or {os.path.join(self.__lib_base_dir, lib_name)}"
                     )
 
     # 复制库文件及其相关内容
     def __copy_lib(self, lib_name, lib_version) -> bool:
         # 先检查3rd文件夹有没有对应的库，如果有，直接退出
-        trd_lib_path = os.path.join(self.__trd_path, lib_name)
-        if os.path.exists(trd_lib_path):
+        trd_lib_dir = os.path.join(self.__trd_dir, lib_name)
+        if os.path.exists(trd_lib_dir):
             # 复制lib
-            copy_dir(os.path.join(trd_lib_path, "lib"), self.__lib_dst_path)
+            copy_dir(os.path.join(trd_lib_dir, "lib"), self.__lib_dst_dir)
             return True
 
         # 检查库路径有没有对应的库
-        lib_path = os.path.join(self.__lib_base_path, lib_name)
-        if not os.path.isdir(lib_path):
+        lib_dir = os.path.join(self.__lib_base_dir, lib_name)
+        if not os.path.isdir(lib_dir):
             return False
 
         # 获取版本信息
-        sub_paths = [
-            d for d in os.listdir(lib_path) if os.path.isdir(os.path.join(lib_path, d))
+        sub_dirs = [
+            d for d in os.listdir(lib_dir) if os.path.isdir(os.path.join(lib_dir, d))
         ]
 
-        if not sub_paths:
+        if not sub_dirs:
             print(f"{lib_name} versions not found!")
             return False
 
         # 选择最新版本的库
-        choose_version_path = max(sub_paths)
-        choose_version = re.sub(r"^[^0-9]+", "", choose_version_path)
+        choose_version_dir = max(sub_dirs)
+        choose_version = re.sub(r"^[^0-9]+", "", choose_version_dir)
 
         # 最新的版本低于要求的版本，报错
         if choose_version < lib_version:
@@ -135,36 +135,36 @@ class Postbuild:
         # 打印最终选择的版本
         print(f"{lib_name} {lib_version} => choose {choose_version}")
 
-        lib_os_version_path = os.path.join(
-            lib_path, choose_version_path, self.__os_name
+        lib_os_version_dir = os.path.join(
+            lib_dir, choose_version_dir, self.__os_name
         )
-        lib_debug_path = os.path.join(lib_os_version_path, self.__os_arch)
-        lib_debug_path_exist = os.path.isdir(lib_debug_path)
-        lib_release_path = os.path.join(
-            lib_os_version_path, f"{self.__os_arch}_release"
+        lib_debug_dir = os.path.join(lib_os_version_dir, self.__os_arch)
+        lib_debug_dir_exist = os.path.isdir(lib_debug_dir)
+        lib_release_dir = os.path.join(
+            lib_os_version_dir, f"{self.__os_arch}_release"
         )
-        lib_release_path_exist = os.path.isdir(lib_release_path)
+        lib_release_dir_exist = os.path.isdir(lib_release_dir)
 
         # 没有lib文件，可能是纯头文件库，直接返回True
-        if not lib_debug_path_exist and not lib_release_path_exist:
+        if not lib_debug_dir_exist and not lib_release_dir_exist:
             return True
 
-        lib_os_arch_path = None
+        lib_os_arch_dir = None
         if self.__build_type == "Release":
-            lib_os_arch_path = (
-                lib_release_path if lib_release_path_exist else lib_debug_path
+            lib_os_arch_dir = (
+                lib_release_dir if lib_release_dir_exist else lib_debug_dir
             )
         else:
-            lib_os_arch_path = (
-                lib_debug_path if lib_debug_path_exist else lib_release_path
+            lib_os_arch_dir = (
+                lib_debug_dir if lib_debug_dir_exist else lib_release_dir
             )
 
         # 复制lib
-        copy_dir(os.path.join(lib_os_arch_path, "lib"), self.__lib_dst_path)
+        copy_dir(os.path.join(lib_os_arch_dir, "lib"), self.__lib_dst_dir)
         return True
 
 
 # 程序入口
 if __name__ == "__main__":
-    prebuild = Postbuild()
-    prebuild.main(sys.argv)
+    postbuild = Postbuild()
+    postbuild.main(sys.argv)
